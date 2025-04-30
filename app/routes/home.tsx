@@ -132,6 +132,8 @@ export default function Home() {
   const fetcher = useFetcher<ActionData>();
   const [isLoading, setIsLoading] = useState(false);
 
+  //TODO: Add links ? This is not working in the old version
+
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) {
       setIsLoading(false);
