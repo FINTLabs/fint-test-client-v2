@@ -1,29 +1,61 @@
 import {
   isRouteErrorResponse,
   Links,
+  type LoaderFunction,
   Meta,
+  type MetaFunction,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useNavigate,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import "@navikt/ds-css/dist/index.css";
+import { Box, Page } from "@navikt/ds-react";
+import { NovariFooter, NovariHeader } from "novari-frontend-components";
+import "./novari-theme.css";
+import { destroySession, getSession } from "~/sessions.server";
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
+export const meta: MetaFunction = () => {
+  return [
+    { title: "FINT Test Client" },
+    { name: "description", content: "FINT Test Client" },
+  ];
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  return { userId };
+};
+
+export async function action({ request }: { request: Request }) {
+  const session = await getSession(request.headers.get("Cookie"));
+  return redirect("/", {
+    headers: {
+      "Set-Cookie": await destroySession(session),
+    },
+  });
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { userId } = useLoaderData();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    const form = new FormData();
+    form.append("_action", "logout");
+    await fetch("/", {
+      method: "POST",
+      body: form,
+    });
+    window.location.href = "/";
+  };
+
   return (
     <html lang="en">
       <head>
@@ -32,8 +64,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body data-theme="novari">
+        <Page
+          footer={
+            <Box as="footer" background={"surface-alt-3-moderate"}>
+              <NovariFooter links={[]} />
+            </Box>
+          }
+        >
+          <Box
+            as="header"
+            className={"pt-2 pb-2 pl-2 pr-2"}
+            background={"bg-default"}
+          >
+            <NovariHeader
+              appName={"FINT Test Client"}
+              menu={[["New URI", "/"]]}
+              isLoggedIn={userId !== undefined}
+              displayName={userId}
+              onMenuClick={(action) => navigate(action)}
+              onLogout={handleLogout}
+            />
+          </Box>
+
+          <Page.Block as="main" width="xl" gutters>
+            {children}
+          </Page.Block>
+        </Page>
         <ScrollRestoration />
         <Scripts />
       </body>
