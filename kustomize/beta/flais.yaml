@@ -10,9 +10,6 @@ spec:
   imagePullPolicy: Always
   onePassword:
     itemPath: "vaults/aks-beta-vault/items/fint-test-client"
-  env:
-    - name: SESSION_SECRET
-      valueFrom: onePassword:fint-test-client-frontend
   ingress:
     routes:
       - host: beta.felleskomponent.no
