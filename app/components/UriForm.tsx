@@ -25,6 +25,7 @@ export function UriForm() {
     setInputURI(e.target.value);
   };
 
+  // TODO: get server from url
   return (
     <HStack gap={"1"}>
       <Label>https://beta.felleskomponent.no</Label>

@@ -1,0 +1,22 @@
+apiVersion: fintlabs.no/v1alpha1
+kind: Application
+metadata:
+  name: fint-test-client
+  namespace: fint-core
+spec:
+  port: 80
+  orgId: fintlabs.no
+  image: ghcr.io/fintlabs/fint-test-client-v2:latest
+  imagePullPolicy: Always
+  onePassword:
+    itemPath: "vaults/aks-beta-vault/items/fint-test-client"
+  env:
+    - name: SESSION_SECRET
+      valueFrom: onePassword:fint-test-client-frontend
+  ingress:
+    routes:
+      - host: beta.felleskomponent.no
+        path: /
+        middlewares:
+  imagePullSecrets:
+    - ghcr

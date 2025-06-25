@@ -1,6 +1,5 @@
 import { Alert } from "@navikt/ds-react";
 import { LoginFormWithJsonPrefill } from "~/components/LoginForm";
-
 import {
   type LoaderFunction,
   redirect,
@@ -54,8 +53,8 @@ export const loader: LoaderFunction = async ({ request }) => {
       const url = new URL(request.url);
       url.search = `?${uri.trim()}`;
 
-      //TODO: Fix this so it is not always api
-      const apiUrl = `https://api.felleskomponent.no${uri}`;
+      //TODO: Fix this so it is not hardcoded
+      const apiUrl = `https://beta.felleskomponent.no${uri}`;
       const session = await getSession(request.headers.get("Cookie"));
 
       try {
@@ -126,13 +125,81 @@ export async function action({ request }: { request: Request }) {
   }
 }
 
+// function formatJsonWithLinks(json: any): string {
+//   const jsonString = JSON.stringify(json, null, 2);
+//   return jsonString.replace(
+//     /(https?:\/\/[^\s"]+)/g,
+//     (match) => `<a href="#"  class="text-blue-600 hover:underline">${match}</a>`
+//   );
+// }
+
+import React from "react";
+
+// Recursively walk and format JSON with clickable links
+function renderJsonWithLinks(value: any): React.ReactNode {
+  if (typeof value === "string") {
+    // If it looks like a URL, return it as a link
+    if (/^https?:\/\/[^\s]+$/i.test(value)) {
+      return (
+        <a
+          href={value}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline break-words"
+        >
+          {value}
+        </a>
+      );
+    }
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return (
+      <ul className="pl-4 list-disc">
+        {value.map((item, index) => (
+          <li key={index}>{renderJsonWithLinks(item)}</li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return (
+      <div className="pl-2 border-l border-gray-300">
+        {Object.entries(value).map(([key, val], index) => (
+          <div key={index}>
+            <span className="font-mono font-semibold">{key}:</span>{" "}
+            {renderJsonWithLinks(val)}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return String(value);
+}
+
+// function SafeJsonViewer({ data }: { data: any }) {
+//   return (
+//     <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[70vh] mt-4 text-sm">
+//       {JSON.stringify(data, null, 2)}
+//     </pre>
+//   );
+// }
+function SafeJsonViewer({ data }: { data: any }) {
+  return (
+    <div className="bg-gray-100 p-4 rounded overflow-auto max-h-[70vh] mt-4 text-sm font-mono whitespace-pre-wrap break-words">
+      {renderJsonWithLinks(data)}
+    </div>
+  );
+}
+
 export default function Home() {
   const { loggedIn, uri, hasError, uriData } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const fetcher = useFetcher<ActionData>();
   const [isLoading, setIsLoading] = useState(false);
-
-  //TODO: Add links ? This is not working in the old version
 
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) {
@@ -165,13 +232,20 @@ export default function Home() {
         />
       )}
 
-      {loggedIn && !uri && <UriForm />}
+      {loggedIn && <UriForm />}
+
+      {/*{loggedIn && uriData && hasError === null && (*/}
+      {/*  <div className="viewer">*/}
+      {/*    <pre*/}
+      {/*      className="bg-gray-100 p-4 rounded overflow-auto max-h-[70vh] mt-4 text-sm"*/}
+      {/*      dangerouslySetInnerHTML={{ __html: formatJsonWithLinks(uriData) }}*/}
+      {/*    />*/}
+      {/*  </div>*/}
+      {/*)}*/}
 
       {loggedIn && uriData && hasError === null && (
         <div className="viewer">
-          <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[70vh] mt-4 text-sm">
-            {JSON.stringify(uriData, null, 2)}
-          </pre>
+          <SafeJsonViewer data={uriData} />
         </div>
       )}
     </>

@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: fint-test-client
+  namespace: fint-core
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`beta.felleskomponent.no`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: fint-test-client
+          namespace: fint-core
+          port: 80

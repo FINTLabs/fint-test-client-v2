@@ -11,15 +11,13 @@ import {
   useLoaderData,
   useNavigate,
 } from "react-router";
-
 import type { Route } from "./+types/root";
-import "./app.css";
-import "@navikt/ds-css/dist/index.css";
+import "./tailwind.css";
+import "@navikt/ds-css";
+import "./novari-theme.css";
 import { Box, Page } from "@navikt/ds-react";
 import { NovariFooter, NovariHeader } from "novari-frontend-components";
-import "./novari-theme.css";
 import { destroySession, getSession } from "~/sessions.server";
-
 export const meta: MetaFunction = () => {
   return [
     { title: "FINT Test Client" },
@@ -68,18 +66,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Page
           footer={
             <Box as="footer" background={"surface-alt-3-moderate"}>
-              <NovariFooter links={[]} />
+              <NovariFooter
+                links={[
+                  {
+                    label: "Driftsmeldinger",
+                    href: "https://novari.no/driftsmeldinger/",
+                  },
+                ]}
+              />
             </Box>
           }
         >
-          <Box
-            as="header"
-            className={"pt-2 pb-2 pl-2 pr-2"}
-            background={"bg-default"}
-          >
+          <Box background={"bg-default"}>
             <NovariHeader
               appName={"FINT Test Client"}
-              menu={[["New URI", "/"]]}
+              showLogoWithTitle={true}
+              menu={[]}
               isLoggedIn={userId !== undefined}
               displayName={userId}
               onMenuClick={(action) => navigate(action)}

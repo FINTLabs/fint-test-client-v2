@@ -1,0 +1,17 @@
+apiVersion: fintlabs.no/v1alpha1
+kind: Application
+metadata:
+  name: fint-test-client
+  namespace: fint-core
+spec:
+  port: 80
+  orgId: fintlabs.no
+  image: ghcr.io/fintlabs/fint-test-client:latest
+  imagePullPolicy: Always
+  ingress:
+    routes:
+      - host: play-with-fint.felleskomponent.no
+        path: /
+        middlewares:
+  imagePullSecrets:
+    - ghcr
