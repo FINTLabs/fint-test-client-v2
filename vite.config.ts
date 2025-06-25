@@ -7,12 +7,12 @@ export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   build: {
     outDir: 'dist',
-    assetsDir: 'static',
+    assetsDir: '?/static',
     rollupOptions: {
       output: {
-        entryFileNames: 'static/[name].[hash].js',
-        chunkFileNames: 'static/[name].[hash].js',
-        assetFileNames: 'static/[name].[hash].[ext]',
+        entryFileNames: '?/static/[name].[hash].js',
+        chunkFileNames: '?/static/[name].[hash].js',
+        assetFileNames: '?/static/[name].[hash].[ext]',
       },
     },
   },

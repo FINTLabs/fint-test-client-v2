@@ -4,7 +4,7 @@ metadata:
   name: fint-test-client
   namespace: fint-core
 spec:
-  port: 8000
+  port: 80
   orgId: fintlabs.no
   image: ghcr.io/fintlabs/fint-test-client-v2:latest
   imagePullPolicy: Always
