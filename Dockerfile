@@ -1,8 +1,11 @@
-FROM node:20
-COPY . /src
-WORKDIR /src
-RUN yarn && yarn build
+FROM node:20-alpine
+WORKDIR /app
 
-FROM nginx:1.26.3
-COPY --from=0 /src/dist/ /usr/share/nginx/html/test-client/
-COPY --from=0 /src/dist/ /usr/share/nginx/html/
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+ENV PORT=8000
+EXPOSE 8000
+CMD ["npm", "start"]
