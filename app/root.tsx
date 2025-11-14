@@ -28,7 +28,30 @@ export const meta: MetaFunction = () => {
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
-  return { userId };
+
+  const cspHeader = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "img-src 'self' data: https:",
+    "connect-src 'self' https://beta.felleskomponent.no https://idp.felleskomponent.no",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join("; ");
+
+  return Response.json(
+    { userId },
+    {
+      headers: {
+        "Content-Security-Policy": cspHeader,
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+      },
+    }
+  );
 };
 
 export async function action({ request }: { request: Request }) {
@@ -77,7 +100,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Box>
           }
         >
-          <Box background={"bg-default"}>
+          <Box background={"bg-default"} className={"pb-4"}>
             <NovariHeader
               appName={"FINT Test Client"}
               showLogoWithTitle={true}

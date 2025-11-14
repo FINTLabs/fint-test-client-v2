@@ -1,4 +1,4 @@
-import { Alert } from "@navikt/ds-react";
+import { Alert, Heading } from "@navikt/ds-react";
 import { LoginFormWithJsonPrefill } from "~/components/LoginForm";
 import {
   type LoaderFunction,
@@ -11,6 +11,11 @@ import { UriForm } from "~/components/UriForm";
 import ClientOAuth2 from "client-oauth2";
 import { commitSession, getSession } from "~/sessions.server";
 import { useEffect, useState } from "react";
+import {
+  validateUriPath,
+  validateUsername,
+  validateClientId,
+} from "~/utils/validation";
 
 type LoaderData = {
   loggedIn: boolean;
@@ -43,8 +48,8 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   if (loggedIn && uri) {
-    if (!uri.startsWith("/") || uri.includes("..") || uri.includes("://")) {
-      hasError = "Ugyldig URI";
+    if (!validateUriPath(uri)) {
+      hasError = "Ugyldig URI - URI må inneholde kun gyldige tegn";
     } else {
       const baseUrl = new URL(request.url).origin;
 
@@ -87,6 +92,18 @@ export async function action({ request }: { request: Request }) {
   if (!clientId || !clientSecret || !username || !password) {
     return {
       error: "All fields are required",
+    };
+  }
+
+  if (!validateUsername(username)) {
+    return {
+      error: "Invalid username format",
+    };
+  }
+
+  if (!validateClientId(clientId)) {
+    return {
+      error: "Invalid client ID format",
     };
   }
 
@@ -135,21 +152,26 @@ export async function action({ request }: { request: Request }) {
 
 import React from "react";
 
-// Recursively walk and format JSON with clickable links
 function renderJsonWithLinks(value: any): React.ReactNode {
   if (typeof value === "string") {
-    // If it looks like a URL, return it as a link
-    if (/^https?:\/\/[^\s]+$/i.test(value)) {
-      return (
-        <a
-          href={value}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline break-words"
-        >
-          {value}
-        </a>
-      );
+    const urlPattern = /^https?:\/\/[^\s<>"']+$/i;
+    if (urlPattern.test(value) && value.length < 2048) {
+      const lowerValue = value.toLowerCase();
+      if (
+        !lowerValue.startsWith("javascript:") &&
+        !lowerValue.startsWith("data:")
+      ) {
+        return (
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline break-words"
+          >
+            {value}
+          </a>
+        );
+      }
     }
     return value;
   }
@@ -196,7 +218,7 @@ function SafeJsonViewer({ data }: { data: any }) {
 }
 
 export default function Home() {
-  const { loggedIn, uri, hasError, uriData } = useLoaderData<LoaderData>();
+  let { loggedIn, uri, hasError, uriData } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const fetcher = useFetcher<ActionData>();
   const [isLoading, setIsLoading] = useState(false);
@@ -244,9 +266,16 @@ export default function Home() {
       {/*)}*/}
 
       {loggedIn && uriData && hasError === null && (
-        <div className="viewer">
-          <SafeJsonViewer data={uriData} />
-        </div>
+        <>
+          <div className="mb-4 mt-6">
+            <Heading size="medium">
+              Loaded {uri}
+            </Heading>
+          </div>
+          <div className="viewer">
+            <SafeJsonViewer data={uriData} />
+          </div>
+        </>
       )}
     </>
   );

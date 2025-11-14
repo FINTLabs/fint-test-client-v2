@@ -8,6 +8,7 @@ import {
   HGrid,
 } from "@navikt/ds-react";
 import { Form } from "react-router";
+import { validateUsername, validateClientId, validateSecretJson } from "~/utils/validation";
 
 type SecretFormFields = {
   username: string;
@@ -70,15 +71,20 @@ export function LoginFormWithJsonPrefill({
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const input = e.target.value;
     setJsonInput(input);
+    setJsonError("");
+
+    if (!input.trim()) {
+      setFormData(DEFAULT_FORM_DATA);
+      return;
+    }
 
     try {
       const parsed = JSON.parse(input);
-      if (isValidSecretJson(parsed)) {
+      if (isValidSecretJson(parsed) && validateSecretJson(parsed)) {
         setFormData(parsed);
-        // setJsonInput("");
       } else {
         setFormData(DEFAULT_FORM_DATA);
-        setJsonError("JSON does not match expected structure.");
+        setJsonError("JSON does not match expected structure or contains invalid characters.");
       }
     } catch (err) {
       setFormData(DEFAULT_FORM_DATA);
@@ -108,6 +114,15 @@ export function LoginFormWithJsonPrefill({
         newErrors[field] = `${field} er påkrevd`;
       }
     });
+
+    if (formData.username && !validateUsername(formData.username)) {
+      newErrors.username = "Brukernavn inneholder ugyldige tegn";
+    }
+
+    if (formData.clientId && !validateClientId(formData.clientId)) {
+      newErrors.clientId = "Client ID inneholder ugyldige tegn";
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
