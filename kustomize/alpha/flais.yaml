@@ -13,6 +13,8 @@ spec:
   ingress:
     routes:
       - host: alpha.felleskomponent.no
+        path: /assets
+      - host: alpha.felleskomponent.no
         path: /
   imagePullSecrets:
     - ghcr
