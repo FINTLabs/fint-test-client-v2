@@ -14,5 +14,7 @@ spec:
     routes:
       - host: alpha.felleskomponent.no
         path: /
+        middlewares:
+          - name: auth-exclude-assets
   imagePullSecrets:
     - ghcr
