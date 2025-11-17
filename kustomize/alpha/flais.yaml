@@ -9,7 +9,7 @@ spec:
   image: ghcr.io/fintlabs/fint-test-client-v2:latest
   imagePullPolicy: Always
   onePassword:
-    itemPath: "vaults/aks-beta-vault/items/fint-test-client"
+    itemPath: "vaults/aks-alpha-vault/items/fint-test-client"
   ingress:
     routes:
       - host: alpha.felleskomponent.no
