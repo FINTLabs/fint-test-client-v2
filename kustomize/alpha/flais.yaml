@@ -6,7 +6,7 @@ metadata:
 spec:
   port: 80
   orgId: fintlabs.no
-  image: ghcr.io/fintlabs/fint-test-client:latest
+  image: ghcr.io/fintlabs/fint-test-client-v2:latest
   imagePullPolicy: Always
   ingress:
     routes:
