@@ -267,11 +267,7 @@ export default function Home() {
 
       {loggedIn && uriData && hasError === null && (
         <>
-          <div className="mb-4 mt-6">
-            <Heading size="medium">
-              Loaded {uri}
-            </Heading>
-          </div>
+          <Heading size={"small"}>Loaded data: {uri}</Heading>
           <div className="viewer">
             <SafeJsonViewer data={uriData} />
           </div>
