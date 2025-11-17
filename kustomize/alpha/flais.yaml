@@ -12,7 +12,7 @@ spec:
     itemPath: "vaults/aks-beta-vault/items/fint-test-client"
   ingress:
     routes:
-      - host: beta.felleskomponent.no
+      - host: alpha.felleskomponent.no
         path: /
   imagePullSecrets:
     - ghcr
