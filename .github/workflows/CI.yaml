@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '25'
 
       - name: Install Dependencies
         run: npm install
@@ -34,7 +34,7 @@ jobs:
 
       - name: Start deployment
         if: github.ref == 'refs/heads/main'
-        uses: peter-evans/repository-dispatch@v2.1.1
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.GITHUBACTION_TOKEN }}
           repository: ${{ github.repository }}
