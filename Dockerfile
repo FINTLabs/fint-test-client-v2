@@ -1,5 +1,4 @@
-# Stage 1: Build the app
-FROM node:25-alpine AS builder
+FROM node:22.12.0-alpine
 
 WORKDIR /app
 
