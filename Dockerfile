@@ -18,6 +18,7 @@ COPY --from=builder /app/build /app/build
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/package*.json /app/
 
-EXPOSE 3000
-ENV PORT=3000
+#EXPOSE 3000
+#ENV PORT=3000
+ENV PORT=80
 CMD ["npx", "react-router-serve", "build/server/index.js"]
