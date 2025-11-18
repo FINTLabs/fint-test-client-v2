@@ -58,8 +58,10 @@ export const loader: LoaderFunction = async ({ request }) => {
       const url = new URL(request.url);
       url.search = `?${uri.trim()}`;
 
-      //TODO: Fix this so it is not hardcoded
-      const apiUrl = `https://alpha.felleskomponent.no${uri}`;
+      // Use beta API for all test environments (alpha, beta, etc.)
+      // Can be overridden with FINT_API_URL environment variable
+      const apiBaseUrl = process.env.FINT_API_URL || "https://beta.felleskomponent.no";
+      const apiUrl = `${apiBaseUrl}${uri}`;
       const session = await getSession(request.headers.get("Cookie"));
 
       try {

@@ -30,13 +30,14 @@ export const loader: LoaderFunction = async ({ request }) => {
   const userId = session.get("userId");
 
   //TODO: Double check all security and settings in this, including allowing api/beta/pwf
+  // Allow connections to beta API (for test environments) and idp
   const cspHeader = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https:",
-    "connect-src 'self' https://alpha.felleskomponent.no https://idp.felleskomponent.no",
+    "connect-src 'self' https://alpha.felleskomponent.no https://beta.felleskomponent.no https://idp.felleskomponent.no",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
