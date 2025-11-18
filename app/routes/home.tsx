@@ -43,6 +43,19 @@ export const loader: LoaderFunction = async ({ request }) => {
     uri = decodeURIComponent(uri);
   }
 
+  const userId = session.get("userId");
+  const accessToken = session.get("accessToken");
+  
+  console.log(`[${new Date().toISOString()}] DEBUG - Loader called:`, {
+    url: request.url,
+    hasUserId: !!userId,
+    userId,
+    hasAccessToken: !!accessToken,
+    accessTokenLength: accessToken ? accessToken.length : 0,
+    uri,
+    cookieHeader: request.headers.get("Cookie") ? "present" : "missing",
+  });
+
   if (session.has("userId")) {
     loggedIn = true;
   }
@@ -63,19 +76,74 @@ export const loader: LoaderFunction = async ({ request }) => {
       const apiBaseUrl = process.env.FINT_API_URL || "https://beta.felleskomponent.no";
       const apiUrl = `${apiBaseUrl}${uri}`;
       const session = await getSession(request.headers.get("Cookie"));
+      
+      const accessToken = session.get("accessToken");
+      const userId = session.get("userId");
+      
+      console.log(`[${new Date().toISOString()}] DEBUG - API Request Details:`, {
+        apiBaseUrl,
+        apiUrl,
+        uri,
+        hasAccessToken: !!accessToken,
+        accessTokenLength: accessToken ? accessToken.length : 0,
+        accessTokenPreview: accessToken ? `${accessToken.substring(0, 20)}...` : "none",
+        userId,
+        requestOrigin: baseUrl,
+      });
 
-      try {
-        const response = await fetch(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${session.get("accessToken")}`,
+      if (!accessToken) {
+        console.log(`[${new Date().toISOString()}] DEBUG - No access token in session`);
+        hasError = "No access token found. Please log in again.";
+      } else {
+        try {
+          const requestHeaders = {
+            Authorization: `Bearer ${accessToken}`,
             "x-client": "fint-test-client",
             Accept: "application/json",
-          },
-        });
-        uriData = await response.json();
-      } catch (error) {
-        console.log(`[${new Date().toISOString()}] API Error:`, error);
-        hasError = "Error fetching data from the API";
+          };
+          
+          console.log(`[${new Date().toISOString()}] DEBUG - Making API request:`, {
+            url: apiUrl,
+            headers: {
+              ...requestHeaders,
+              Authorization: `Bearer ${accessToken.substring(0, 20)}...`,
+            },
+          });
+
+          const response = await fetch(apiUrl, {
+            headers: requestHeaders,
+          });
+
+          console.log(`[${new Date().toISOString()}] DEBUG - API Response:`, {
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok,
+            headers: Object.fromEntries(response.headers.entries()),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.log(`[${new Date().toISOString()}] DEBUG - API Error Response Body:`, errorText);
+            
+            if (response.status === 401) {
+              hasError = `Unauthorized (401): ${errorText || "Authentication failed. Token may be expired or invalid."}`;
+            } else {
+              hasError = `API Error (${response.status}): ${errorText || response.statusText}`;
+            }
+          } else {
+            uriData = await response.json();
+            console.log(`[${new Date().toISOString()}] DEBUG - API Success:`, {
+              dataKeys: uriData ? Object.keys(uriData) : "null",
+              dataPreview: uriData ? JSON.stringify(uriData).substring(0, 200) : "null",
+            });
+          }
+        } catch (error) {
+          console.log(`[${new Date().toISOString()}] DEBUG - API Exception:`, {
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+          });
+          hasError = `Error fetching data from the API: ${error instanceof Error ? error.message : String(error)}`;
+        }
       }
     }
   }
@@ -110,24 +178,49 @@ export async function action({ request }: { request: Request }) {
   }
 
   try {
+    const accessTokenUri = "https://idp.felleskomponent.no/nidp/oauth/nam/token";
+    
+    console.log(`[${new Date().toISOString()}] DEBUG - Login attempt:`, {
+      clientId,
+      username,
+      accessTokenUri,
+      hasClientSecret: !!clientSecret,
+      hasPassword: !!password,
+    });
+
     const auth = new ClientOAuth2({
       clientId,
       clientSecret,
-      accessTokenUri: "https://idp.felleskomponent.no/nidp/oauth/nam/token",
+      accessTokenUri,
       scopes: ["fint-client"],
     });
 
+    console.log(`[${new Date().toISOString()}] DEBUG - Requesting token from:`, accessTokenUri);
     const user = await auth.owner.getToken(username, password);
 
     if (!user) {
-      console.log(`[${new Date().toISOString()}] Error with login`);
+      console.log(`[${new Date().toISOString()}] DEBUG - Login failed: No user object returned`);
       return {
         error: "Authentication failed. Please check your credentials.",
       };
     }
+    
+    console.log(`[${new Date().toISOString()}] DEBUG - Token received:`, {
+      hasAccessToken: !!user.accessToken,
+      accessTokenLength: user.accessToken ? user.accessToken.length : 0,
+      accessTokenPreview: user.accessToken ? `${user.accessToken.substring(0, 20)}...` : "none",
+      tokenType: user.tokenType,
+      expiresIn: user.expiresIn,
+    });
+
     const session = await getSession(request.headers.get("Cookie"));
     session.set("userId", username);
     session.set("accessToken", user.accessToken);
+
+    console.log(`[${new Date().toISOString()}] DEBUG - Session updated:`, {
+      userId: username,
+      sessionHasAccessToken: session.has("accessToken"),
+    });
 
     console.log(`[${new Date().toISOString()}] Login completed`);
 
