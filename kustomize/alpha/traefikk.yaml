@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`alpha.felleskomponent.no`) && PathPrefix(`/`)
+    - match: Host(`alpha.felleskomponent.no`) && PathPrefix(`/`) && PathPrefix(`/assets`)
       kind: Rule
       services:
         - name: fint-test-client

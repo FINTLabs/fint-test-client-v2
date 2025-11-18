@@ -139,16 +139,7 @@ export function LoginFormWithJsonPrefill({
   return (
     <Form onSubmit={handleSubmit}>
       <VStack gap={"3"}>
-        <ReadMore header="Fyll ut med JSON " size="medium" defaultOpen={false}>
-          <Textarea
-            label="Importer JSON med tilgangsinformasjon"
-            value={jsonInput}
-            onChange={handleJsonChange}
-            description="Innholdet valideres og brukes kun i nettleseren – ikke sendt til server."
-            minRows={6}
-          />
-          {jsonError && <p style={{ color: "red" }}>{jsonError}</p>}
-        </ReadMore>
+
 
         <TextField
           label="Client ID"
@@ -183,6 +174,17 @@ export function LoginFormWithJsonPrefill({
           autoComplete="off"
           error={errors?.password}
         />
+
+        <ReadMore header="Fyll ut med JSON fra kunde-portal " size="medium" defaultOpen={false}>
+          <Textarea
+              label="Importer JSON med tilgangsinformasjon"
+              value={jsonInput}
+              onChange={handleJsonChange}
+              description="Innholdet valideres og brukes kun i nettleseren – ikke sendt til server."
+              minRows={6}
+          />
+          {jsonError && <p style={{ color: "red" }}>{jsonError}</p>}
+        </ReadMore>
 
         <HGrid gap={"6"} columns={3}>
           {isLoading && <Button loading>Lagre</Button>}
