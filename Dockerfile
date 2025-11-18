@@ -10,7 +10,7 @@ COPY . .
 RUN npx react-router build
 
 # Stage 2: Run with @react-router/serve
-FROM node:25-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
@@ -19,4 +19,5 @@ COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/package*.json /app/
 
 EXPOSE 3000
+ENV PORT=3000
 CMD ["npx", "react-router-serve", "build/server/index.js"]
