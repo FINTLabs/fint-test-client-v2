@@ -9,6 +9,9 @@ spec:
   orgId: fintlabs.no
   image: ghcr.io/fintlabs/fint-test-client-v2:latest
   imagePullPolicy: Always
+  env:
+    - name: NODE_ENV
+      value: "production"
   onePassword:
     itemPath: "vaults/aks-alpha-vault/items/fint-test-client"
   ingress:

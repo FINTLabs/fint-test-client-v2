@@ -54,6 +54,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   
   console.log(`[${new Date().toISOString()}] DEBUG - Loader called:`, {
     url: request.url,
+    protocol: new URL(request.url).protocol,
     hasUserId: !!userId,
     userId,
     hasAccessToken: !!accessToken,
@@ -233,10 +234,25 @@ export async function action({ request }: { request: Request }) {
     });
 
     const cookieHeader = await commitSession(session);
+    const requestUrl = new URL(request.url);
+    
+    // Parse cookie attributes to see what's being set
+    const cookieParts = cookieHeader.split(";").map(p => p.trim());
+    const cookieNameValue = cookieParts[0];
+    const cookieAttributes: Record<string, string> = {};
+    cookieParts.slice(1).forEach(part => {
+      const [key, value] = part.split("=");
+      cookieAttributes[key.toLowerCase()] = value || "true";
+    });
+    
     console.log(`[${new Date().toISOString()}] DEBUG - Cookie being set:`, {
       cookieLength: cookieHeader.length,
-      cookiePreview: cookieHeader.substring(0, 100) + "...",
-      requestOrigin: new URL(request.url).origin,
+      cookieNameValue: cookieNameValue.substring(0, 50) + "...",
+      cookieAttributes,
+      requestOrigin: requestUrl.origin,
+      requestHost: requestUrl.host,
+      requestProtocol: requestUrl.protocol,
+      fullCookieHeader: cookieHeader,
     });
 
     console.log(`[${new Date().toISOString()}] Login completed`);

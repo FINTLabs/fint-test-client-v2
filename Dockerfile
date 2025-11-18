@@ -21,4 +21,5 @@ COPY --from=builder /app/package*.json /app/
 #EXPOSE 3000
 #ENV PORT=3000
 ENV PORT=80
+ENV NODE_ENV=production
 CMD ["npx", "react-router-serve", "build/server/index.js"]

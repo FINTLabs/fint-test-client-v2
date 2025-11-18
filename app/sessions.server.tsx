@@ -17,11 +17,28 @@ if (!process.env.SESSION_SECRET) {
 
 const SECRET = process.env.SESSION_SECRET;
 
+// Determine if we should use secure cookies
+// When behind Traefik/load balancer, the app sees HTTP but browser uses HTTPS
+// So we need secure cookies. Default to true for production deployments.
+// Allow override via FORCE_SECURE_COOKIES env var
+const forceSecureCookies = process.env.FORCE_SECURE_COOKIES === "true";
+const forceInsecureCookies = process.env.FORCE_SECURE_COOKIES === "false";
 const isProduction = process.env.NODE_ENV === "production";
+const isDevelopment = process.env.NODE_ENV === "development";
+// Default to secure cookies unless in development mode
+// When behind HTTPS-terminating proxy, browser uses HTTPS so cookies must be secure
+const useSecureCookies = forceInsecureCookies 
+  ? false 
+  : forceSecureCookies 
+    ? true 
+    : !isDevelopment; // Secure by default unless explicitly in development
+
 console.log(`[${new Date().toISOString()}] DEBUG - Session config:`, {
   nodeEnv: process.env.NODE_ENV,
   isProduction,
-  secureCookie: isProduction,
+  forceSecureCookies,
+  forceInsecureCookies,
+  secureCookie: useSecureCookies,
   hasSessionSecret: !!SECRET,
 });
 
@@ -34,7 +51,7 @@ const { getSession, commitSession, destroySession } =
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: "/",
       sameSite: "lax",
-      secure: isProduction,
+      secure: useSecureCookies,
     },
   });
 
