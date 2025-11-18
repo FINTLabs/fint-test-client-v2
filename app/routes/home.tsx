@@ -222,11 +222,18 @@ export async function action({ request }: { request: Request }) {
       sessionHasAccessToken: session.has("accessToken"),
     });
 
+    const cookieHeader = await commitSession(session);
+    console.log(`[${new Date().toISOString()}] DEBUG - Cookie being set:`, {
+      cookieLength: cookieHeader.length,
+      cookiePreview: cookieHeader.substring(0, 100) + "...",
+      requestOrigin: new URL(request.url).origin,
+    });
+
     console.log(`[${new Date().toISOString()}] Login completed`);
 
     return redirect("/", {
       headers: {
-        "Set-Cookie": await commitSession(session),
+        "Set-Cookie": cookieHeader,
       },
     });
   } catch (error) {

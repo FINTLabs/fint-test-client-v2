@@ -17,6 +17,14 @@ if (!process.env.SESSION_SECRET) {
 
 const SECRET = process.env.SESSION_SECRET;
 
+const isProduction = process.env.NODE_ENV === "production";
+console.log(`[${new Date().toISOString()}] DEBUG - Session config:`, {
+  nodeEnv: process.env.NODE_ENV,
+  isProduction,
+  secureCookie: isProduction,
+  hasSessionSecret: !!SECRET,
+});
+
 const { getSession, commitSession, destroySession } =
   createCookieSessionStorage<SessionData, SessionFlashData>({
     cookie: {
@@ -26,7 +34,7 @@ const { getSession, commitSession, destroySession } =
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: "/",
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
     },
   });
 
