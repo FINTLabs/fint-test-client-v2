@@ -59,7 +59,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       url.search = `?${uri.trim()}`;
 
       //TODO: Fix this so it is not hardcoded
-      const apiUrl = `https://beta.felleskomponent.no${uri}`;
+      const apiUrl = `https://alpha.felleskomponent.no${uri}`;
       const session = await getSession(request.headers.get("Cookie"));
 
       try {
