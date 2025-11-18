@@ -43,8 +43,14 @@ export const loader: LoaderFunction = async ({ request }) => {
     uri = decodeURIComponent(uri);
   }
 
+  const cookieHeader = request.headers.get("Cookie");
   const userId = session.get("userId");
   const accessToken = session.get("accessToken");
+  
+  // Check what cookies are actually present
+  const cookieNames = cookieHeader 
+    ? cookieHeader.split(";").map(c => c.trim().split("=")[0])
+    : [];
   
   console.log(`[${new Date().toISOString()}] DEBUG - Loader called:`, {
     url: request.url,
@@ -53,7 +59,11 @@ export const loader: LoaderFunction = async ({ request }) => {
     hasAccessToken: !!accessToken,
     accessTokenLength: accessToken ? accessToken.length : 0,
     uri,
-    cookieHeader: request.headers.get("Cookie") ? "present" : "missing",
+    cookieHeader: cookieHeader ? "present" : "missing",
+    cookieHeaderLength: cookieHeader ? cookieHeader.length : 0,
+    cookieNames,
+    hasSessionCookie: cookieNames.includes("__session"),
+    sessionKeys: session.has("userId") ? ["userId"] : session.has("accessToken") ? ["accessToken"] : [],
   });
 
   if (session.has("userId")) {
