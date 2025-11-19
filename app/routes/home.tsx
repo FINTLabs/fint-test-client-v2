@@ -11,7 +11,7 @@ import { UriForm } from "~/components/UriForm";
 import ClientOAuth2 from "client-oauth2";
 import { useEffect, useState } from "react";
 import { validateUriPath } from "~/utils/validation";
-import { getSession, commitSession } from "~/sessions.server";
+import { getSession, commitSession, destroySession } from "~/sessions.server";
 
 type LoaderData = {
   uri?: string;
@@ -89,7 +89,16 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
   }
 
-  return { uri, hasError, isAuthenticated, uriData };
+  const headers = new Headers();
+  if (hasError && hasError.includes("Unauthorized (401)")) {
+    headers.set("Set-Cookie", await destroySession(session));
+    return Response.json(
+      { uri, hasError, isAuthenticated: false, uriData: null },
+      { headers }
+    );
+  }
+
+  return Response.json({ uri, hasError, isAuthenticated, uriData });
 };
 
 import React from "react";
@@ -232,6 +241,8 @@ export async function action({ request }: { request: Request }) {
     });
 
     const user = await auth.owner.getToken(username, password);
+
+    console.log("User token:", user.accessToken);
 
     if (!user) {
       return Response.json({
