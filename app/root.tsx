@@ -17,7 +17,8 @@ import "@navikt/ds-css";
 import "./novari-theme.css";
 import { Box, Page } from "@navikt/ds-react";
 import { NovariFooter, NovariHeader } from "novari-frontend-components";
-import { destroySession, getSession } from "~/sessions.server";
+import { getAuth, clearAuth } from "~/utils/storage";
+import { useEffect, useState } from "react";
 export const meta: MetaFunction = () => {
   return [
     { title: "FINT Test Client" },
@@ -26,8 +27,8 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await getSession(request.headers.get("Cookie"));
-  const userId = session.get("userId");
+  // Auth state is checked client-side via localStorage
+  // This loader just sets up security headers
 
   //TODO: Double check all security and settings in this, including allowing api/beta/pwf
   // Allow connections to beta API (for test environments) and idp
@@ -44,7 +45,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   ].join("; ");
 
   return Response.json(
-    { userId },
+    {},
     {
       headers: {
         "Content-Security-Policy": cspHeader,
@@ -57,25 +58,23 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export async function action({ request }: { request: Request }) {
-  const session = await getSession(request.headers.get("Cookie"));
-  return redirect("/", {
-    headers: {
-      "Set-Cookie": await destroySession(session),
-    },
-  });
+  // Logout is handled client-side by clearing localStorage
+  return redirect("/");
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { userId } = useLoaderData();
   const navigate = useNavigate();
+  const [userId, setUserId] = useState<string | undefined>(undefined);
+
+  // Check auth state from localStorage
+  useEffect(() => {
+    const auth = getAuth();
+    setUserId(auth?.userId);
+  }, []);
 
   const handleLogout = async () => {
-    const form = new FormData();
-    form.append("_action", "logout");
-    await fetch("/", {
-      method: "POST",
-      body: form,
-    });
+    clearAuth();
+    setUserId(undefined);
     window.location.href = "/";
   };
 
