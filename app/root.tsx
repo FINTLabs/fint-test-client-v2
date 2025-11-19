@@ -5,7 +5,6 @@ import {
   Meta,
   type MetaFunction,
   Outlet,
-  redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -17,8 +16,12 @@ import "@navikt/ds-css";
 import "./novari-theme.css";
 import { Box, Page } from "@navikt/ds-react";
 import { NovariFooter, NovariHeader } from "novari-frontend-components";
-import { getAuth, clearAuth } from "~/utils/storage";
-import { useEffect, useState } from "react";
+import { getSession } from "~/sessions.server";
+
+type LoaderData = {
+  userId?: string;
+};
+
 export const meta: MetaFunction = () => {
   return [
     { title: "FINT Test Client" },
@@ -27,11 +30,9 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  // Auth state is checked client-side via localStorage
-  // This loader just sets up security headers
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
 
-  //TODO: Double check all security and settings in this, including allowing api/beta/pwf
-  // Allow connections to beta API (for test environments) and idp
   const cspHeader = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
@@ -45,7 +46,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   ].join("; ");
 
   return Response.json(
-    {},
+    { userId },
     {
       headers: {
         "Content-Security-Policy": cspHeader,
@@ -57,25 +58,13 @@ export const loader: LoaderFunction = async ({ request }) => {
   );
 };
 
-export async function action({ request }: { request: Request }) {
-  // Logout is handled client-side by clearing localStorage
-  return redirect("/");
-}
-
 export function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState<string | undefined>(undefined);
+  const loaderData = useLoaderData<LoaderData>();
+  const userId = loaderData?.userId;
 
-  // Check auth state from localStorage
-  useEffect(() => {
-    const auth = getAuth();
-    setUserId(auth?.userId);
-  }, []);
-
-  const handleLogout = async () => {
-    clearAuth();
-    setUserId(undefined);
-    window.location.href = "/";
+  const handleLogout = () => {
+    navigate("/logout");
   };
 
   return (

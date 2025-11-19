@@ -1,7 +1,13 @@
 import { redirect } from "react-router";
+import { getSession, destroySession } from "~/sessions.server";
 
 export async function action({ request }: { request: Request }) {
-  // Logout is handled client-side by clearing localStorage
-  // This action just redirects - the client will clear storage
-  return redirect("/");
+  const session = await getSession(request.headers.get("Cookie"));
+  const clearedSessionCookie = await destroySession(session);
+
+  return redirect("https://idp.felleskomponent.no/nidp/app/logout", {
+    headers: {
+      "Set-Cookie": clearedSessionCookie,
+    },
+  });
 }
