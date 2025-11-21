@@ -2,10 +2,10 @@ import axios from 'axios';
 
 // Get BASE_URL from current origin, matching the old behavior: const BASE_URL = new URL(document.URL).origin;
 export function getBaseUrl(): string {
-   // return new URL(window.location.href).origin;
+    // Use relative URL (empty string) so requests go to same origin, then nginx will proxy to beta
+    // return new URL(window.location.href).origin;
 
-    //local: testing with beta
-    return 'https://beta.felleskomponent.no';
+    return '';
 }
 
 // Export BASE_URL as a getter for backward compatibility

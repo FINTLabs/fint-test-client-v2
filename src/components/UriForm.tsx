@@ -7,14 +7,16 @@ interface UriFormProps {
 }
 
 export function UriForm({ uri, onUriChange, onSubmit }: UriFormProps) {
-    const baseUrl = getBaseUrl();
+    // Show current origin in UI, but API calls use relative URLs (proxied by nginx)
+    const displayUrl = typeof window !== 'undefined' ? new URL(window.location.href).origin : '';
+    // const baseUrl = getBaseUrl();
     
     return (
         <>
             {uri === '' && (
                 <p className="intro">
                     Skriv inn en sti (for eksempel <code>/fint/client</code>) etter{' '}
-                    <code>{baseUrl}</code> og trykk FINT!
+                    <code>{displayUrl}</code> og trykk FINT!
                 </p>
             )}
 
@@ -22,7 +24,7 @@ export function UriForm({ uri, onUriChange, onSubmit }: UriFormProps) {
                 onSubmit={onSubmit}
                 style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
             >
-                <span className="fint">{baseUrl}</span>
+                <span className="fint">{displayUrl}</span>
                 <input
                     type="text"
                     value={uri}
