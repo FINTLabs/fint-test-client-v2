@@ -1,7 +1,7 @@
 # Stage 1: Build the app
 FROM node:24-alpine AS builder
 
-WORKDIR /app
+WORKDIR /src
 
 COPY package*.json ./
 RUN npm install
