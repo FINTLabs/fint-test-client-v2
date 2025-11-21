@@ -1,10 +1,16 @@
-import { reactRouter } from '@react-router/dev/vite';
+import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+  plugins: [
+    tailwindcss(), 
+    react(), 
+    tsconfigPaths(),
+    nodePolyfills(),
+  ],
   server: {
     port: 3000,
     hmr: {
@@ -13,6 +19,4 @@ export default defineConfig({
       port: 3000,
     },
   },
-  // Removed 'define' - we'll access environment variables directly at runtime
-  // This allows the Kubernetes env vars to work correctly
 });
