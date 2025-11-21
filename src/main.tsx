@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "@navikt/ds-css";
-import "styles/novari-theme.css";
+import "./styles/novari-theme.css";
 
 // Set the novari theme on the HTML element
 document.documentElement.setAttribute("data-theme", "novari");
