@@ -2,7 +2,10 @@ import axios from 'axios';
 
 // Get BASE_URL from current origin, matching the old behavior: const BASE_URL = new URL(document.URL).origin;
 export function getBaseUrl(): string {
-    return new URL(window.location.href).origin;
+   // return new URL(window.location.href).origin;
+
+    //todo: testing with beta
+    return 'https://beta.felleskomponent.no';
 }
 
 // Export BASE_URL as a getter for backward compatibility
