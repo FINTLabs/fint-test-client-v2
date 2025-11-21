@@ -4,7 +4,7 @@ import axios from 'axios';
 export function getBaseUrl(): string {
    return new URL(window.location.href).origin;
 
-    //todo: testing with beta
+    //local: testing with beta
     // return 'https://beta.felleskomponent.no';
 }
 
@@ -21,4 +21,3 @@ export const axiosInstance = axios.create({
 
 export const IDP_TOKEN_URI = 'https://idp.felleskomponent.no/nidp/oauth/nam/token';
 export const OAUTH_SCOPES = ['fint-client'];
-
