@@ -1,20 +1,19 @@
-# Stage 1: Build the app
-FROM node:24-alpine AS builder
+FROM node:24 AS build
 
 WORKDIR /src
 
-COPY package*.json ./
+COPY package.json package-lock.json ./
+
 RUN npm install
 
 COPY . .
+
 RUN npm run build
 
-# Stage 2: Serve static files with nginx
-FROM nginx:alpine
+FROM nginx:1.27.5
 
-# Copy built files from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=build /src/dist/ /usr/share/nginx/html/test-client/
 
-EXPOSE 80
+COPY --from=build /src/dist/ /usr/share/nginx/html/
 
-CMD ["nginx", "-g", "daemon off;"]
+COPY default.conf /etc/nginx/conf.d/default.conf
