@@ -4,12 +4,10 @@ metadata:
   name: fint-test-client
   namespace: fint-core
 spec:
-  port: 3000
+  port: 80
   orgId: fintlabs.no
   image: ghcr.io/fintlabs/fint-test-client-v2:latest
   imagePullPolicy: Always
-  onePassword:
-    itemPath: "vaults/aks-beta-vault/items/fint-test-client"
   ingress:
     routes:
       - host: beta.felleskomponent.no
