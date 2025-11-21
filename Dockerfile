@@ -7,19 +7,14 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npx react-router build
+RUN npm run build
 
-# Stage 2: Run with @react-router/serve
-FROM node:24-alpine
+# Stage 2: Serve static files with nginx
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy built files from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY --from=builder /app/build /app/build
-COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/package*.json /app/
+EXPOSE 80
 
-#EXPOSE 3000
-#ENV PORT=3000
-ENV PORT=80
-ENV NODE_ENV=production
-CMD ["npx", "react-router-serve", "build/server/index.js"]
+CMD ["nginx", "-g", "daemon off;"]
