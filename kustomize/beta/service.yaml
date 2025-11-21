@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: fint-core
+  labels:
+    io.kompose.service: fint-test-client
+  name: fint-test-client
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+#      port: 3000
+      port: 80
+  type: ClusterIP
+  selector:
+    io.kompose.service: fint-test-client
