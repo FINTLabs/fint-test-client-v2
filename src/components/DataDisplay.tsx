@@ -6,19 +6,8 @@ interface DataDisplayProps {
     data: unknown;
 }
 
-// Escape HTML to prevent XSS
-function escapeHtml(text: string): string {
-    const map: Record<string, string> = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;',
-    };
-    return text.replace(/[&<>"']/g, (m) => map[m]);
-}
-
 // Function to safely convert URLs in JSON string to clickable links
+// React automatically escapes text content, so we don't need manual HTML escaping
 function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
     // Match URLs (http://, https://, or relative URLs starting with /)
     // More precise regex to avoid matching inside other JSON values
@@ -30,9 +19,9 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
     let keyCounter = 0;
     
     while ((match = urlRegex.exec(jsonString)) !== null) {
-        // Add text before the URL (escaped)
+        // Add text before the URL (React will escape it automatically)
         if (match.index > lastIndex) {
-            parts.push(escapeHtml(jsonString.substring(lastIndex, match.index)));
+            parts.push(jsonString.substring(lastIndex, match.index));
         }
         
         // Create safe link
@@ -58,23 +47,23 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
                     </a>
                 );
             } else {
-                // If invalid protocol, just show as escaped text
-                parts.push(escapeHtml(url));
+                // If invalid protocol, just show as text (React escapes automatically)
+                parts.push(url);
             }
         } catch {
-            // If URL parsing fails, escape and show as text
-            parts.push(escapeHtml(url));
+            // If URL parsing fails, show as text (React escapes automatically)
+            parts.push(url);
         }
         
         lastIndex = match.index + match[0].length;
     }
     
-    // Add remaining text (escaped)
+    // Add remaining text (React escapes automatically)
     if (lastIndex < jsonString.length) {
-        parts.push(escapeHtml(jsonString.substring(lastIndex)));
+        parts.push(jsonString.substring(lastIndex));
     }
     
-    return parts.length > 0 ? parts : [escapeHtml(jsonString)];
+    return parts.length > 0 ? parts : [jsonString];
 }
 
 export function DataDisplay({ loading, error, data }: DataDisplayProps) {
