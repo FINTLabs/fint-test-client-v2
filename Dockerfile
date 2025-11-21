@@ -6,16 +6,11 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY default.conf ./
-
 COPY . .
 
 RUN npm run build
 
 FROM nginx:1.27.5
-
 COPY --from=build /src/dist/ /usr/share/nginx/html/test-client/
-
 COPY --from=build /src/dist/ /usr/share/nginx/html/
-
-COPY --from=build /src/default.conf /etc/nginx/conf.d/default.conf
+COPY default.conf /etc/nginx/conf.d/default.conf
