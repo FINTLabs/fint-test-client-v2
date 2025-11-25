@@ -1,6 +1,5 @@
-import { NovariFooter } from 'novari-frontend-components';
+import { NovariFooter } from "novari-frontend-components";
 
 export function Footer() {
-    return <NovariFooter links={[]} />;
+  return <NovariFooter links={[]} />;
 }
-

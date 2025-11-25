@@ -8,7 +8,7 @@ import "./styles/novari-theme.css";
 document.documentElement.setAttribute("data-theme", "novari");
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
