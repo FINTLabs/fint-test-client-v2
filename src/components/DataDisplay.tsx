@@ -1,3 +1,4 @@
+import { Box } from "@navikt/ds-react";
 import React, { useMemo } from "react";
 
 interface DataDisplayProps {
@@ -5,6 +6,7 @@ interface DataDisplayProps {
   error: string | null;
   data: unknown;
 }
+
 
 // Function to safely convert URLs in JSON string to clickable links
 // React automatically escapes text content, so we don't need manual HTML escaping
@@ -64,6 +66,7 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
   return parts.length > 0 ? parts : [jsonString];
 }
 
+
 export function DataDisplay({ loading, error, data }: DataDisplayProps) {
   const jsonContent = useMemo(() => {
     if (data === null) return null;
@@ -72,6 +75,7 @@ export function DataDisplay({ loading, error, data }: DataDisplayProps) {
   }, [data]);
 
   return (
+      <Box background="surface-subtle" padding="space-16" borderWidth="2">
     <section style={{ marginTop: "1rem" }}>
       {loading && <div>Loading…</div>}
       {error && <pre className="error">{error}</pre>}
@@ -79,5 +83,6 @@ export function DataDisplay({ loading, error, data }: DataDisplayProps) {
         <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{jsonContent}</pre>
       )}
     </section>
+      </Box>
   );
 }
