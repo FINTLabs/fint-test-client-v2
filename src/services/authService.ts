@@ -21,7 +21,10 @@ export async function login(
   // Calculate expiration date from expiresIn (seconds) or use default 1 hour
   // The token may have expiresIn as a property or in the data object
   const expiresInSeconds =
-    typeof user.expiresIn === "number" ? user.expiresIn : (user.data as any)?.expires_in || 3600;
+      Number((user as any).expiresIn) ||
+      Number((user.data as any)?.expires_in) ||
+      3600;
+
   const expiresDate = new Date(Date.now() + expiresInSeconds * 1000).toISOString();
 
   return {

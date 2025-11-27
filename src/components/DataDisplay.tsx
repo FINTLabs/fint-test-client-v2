@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { CopyButton } from "@navikt/ds-react";
 
 interface DataDisplayProps {
   loading: boolean;
@@ -67,19 +68,27 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
 
 
 export function DataDisplay({ loading, error, data }: DataDisplayProps) {
-  const jsonContent = useMemo(() => {
+  const jsonString = useMemo(() => {
     if (data === null) return null;
-    const jsonString = JSON.stringify(data, null, 2);
-    return linkifyUrls(jsonString);
+    return JSON.stringify(data, null, 2);
   }, [data]);
 
-  return (
+  const jsonContent = useMemo(() => {
+    if (!jsonString) return null;
+    return linkifyUrls(jsonString);
+  }, [jsonString]);
 
+  return (
     <section style={{ marginTop: "1rem" }}>
       {loading && <div>Loading…</div>}
       {error && <pre className="error">{error}</pre>}
-      {data !== null && jsonContent && (
-        <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{jsonContent}</pre>
+      {data !== null && jsonString && jsonContent && (
+        <div>
+          <div style={{ marginBottom: "0.5rem", display: "flex", justifyContent: "flex-end" }}>
+            <CopyButton copyText={jsonString} text="Kopier JSON" />
+          </div>
+          <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{jsonContent}</pre>
+        </div>
       )}
     </section>
   );

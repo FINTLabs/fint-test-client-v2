@@ -11,7 +11,7 @@ import store from "store2";
 import type { Auth } from "./utils/auth";
 
 export default function App() {
-  const { auth, setAuth, expires, setExpires, isExpired, checkAuth } = useAuth();
+  const { setAuth, setExpires, isExpired, checkAuth } = useAuth();
   const { data, error, loading, fetchUrl } = useApi(checkAuth);
   const { uri, setUri, handleSubmit } = useUrl(fetchUrl, isExpired);
 
@@ -33,12 +33,14 @@ export default function App() {
     <Page footer={<Footer />}>
       <Header onLogout={handleLogout} />
       <Page.Block as="main" width="xl" gutters>
-        <Box  padding="space-16" >
+        <Box padding="space-16">
           <UriForm uri={uri} onUriChange={setUri} onSubmit={handleSubmit} />
         </Box>
-        <Box background="surface-subtle" padding="space-16" borderWidth="2">
-          <DataDisplay loading={loading} error={error} data={data} />
-        </Box>
+        {data !== null && (
+          <Box background="surface-subtle" padding="space-16" borderWidth="2">
+            <DataDisplay loading={loading} error={error} data={data} />
+          </Box>
+        )}
       </Page.Block>
     </Page>
   );
