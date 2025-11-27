@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { CopyButton } from "@navikt/ds-react";
 
 interface DataDisplayProps {
   loading: boolean;
@@ -82,13 +81,8 @@ export function DataDisplay({ loading, error, data }: DataDisplayProps) {
     <section style={{ marginTop: "1rem" }}>
       {loading && <div>Loading…</div>}
       {error && <pre className="error">{error}</pre>}
-      {data !== null && jsonString && jsonContent && (
-        <div>
-          <div style={{ marginBottom: "0.5rem", display: "flex", justifyContent: "flex-end" }}>
-            <CopyButton copyText={jsonString} text="Kopier JSON" />
-          </div>
-          <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{jsonContent}</pre>
-        </div>
+      {data !== null && jsonContent && (
+        <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{jsonContent}</pre>
       )}
     </section>
   );

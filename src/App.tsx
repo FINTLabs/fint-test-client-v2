@@ -1,4 +1,4 @@
-import {Box, Page} from "@navikt/ds-react";
+import { Box, Page, CopyButton } from "@navikt/ds-react";
 import { useAuth } from "./hooks/useAuth";
 import { useApi } from "./hooks/useApi";
 import { useUrl } from "./hooks/useUrl";
@@ -9,11 +9,17 @@ import { UriForm } from "./components/UriForm";
 import { DataDisplay } from "./components/DataDisplay";
 import store from "store2";
 import type { Auth } from "./utils/auth";
+import { useMemo } from "react";
 
 export default function App() {
   const { setAuth, setExpires, isExpired, checkAuth } = useAuth();
   const { data, error, loading, fetchUrl } = useApi(checkAuth);
   const { uri, setUri, handleSubmit } = useUrl(fetchUrl, isExpired);
+
+  const jsonString = useMemo(() => {
+    if (data === null) return null;
+    return JSON.stringify(data, null, 2);
+  }, [data]);
 
   const handleLogout = () => {
     store.clear();
@@ -38,6 +44,11 @@ export default function App() {
         </Box>
         {data !== null && (
           <Box background="surface-subtle" padding="space-16" borderWidth="2">
+            {jsonString && (
+              <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "flex-end" }}>
+                <CopyButton copyText={jsonString} text="Kopier JSON" />
+              </div>
+            )}
             <DataDisplay loading={loading} error={error} data={data} />
           </Box>
         )}
