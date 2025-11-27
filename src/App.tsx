@@ -33,9 +33,11 @@ export default function App() {
     <Page footer={<Footer />}>
       <Header onLogout={handleLogout} />
       <Page.Block as="main" width="xl" gutters>
-        <UriForm uri={uri} onUriChange={setUri} onSubmit={handleSubmit} />
+        <Box  padding="space-16" >
+          <UriForm uri={uri} onUriChange={setUri} onSubmit={handleSubmit} />
+        </Box>
         <Box background="surface-subtle" padding="space-16" borderWidth="2">
-        <DataDisplay loading={loading} error={error} data={data} />
+          <DataDisplay loading={loading} error={error} data={data} />
         </Box>
       </Page.Block>
     </Page>
