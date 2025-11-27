@@ -43,14 +43,15 @@ export default function App() {
           <UriForm uri={uri} onUriChange={setUri} onSubmit={handleSubmit} />
         </Box>
         {data !== null && (
-          <Box background="surface-subtle" padding="space-16" borderWidth="2">
-            {jsonString && (
-              <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "flex-end" }}>
-                <CopyButton copyText={jsonString} text="Kopier JSON" />
-              </div>
-            )}
-            <DataDisplay loading={loading} error={error} data={data} />
-          </Box>
+            <><Box background="surface-subtle" padding="space-4" >
+              {jsonString && (
+                  <div style={{marginBottom: "1rem", display: "flex", justifyContent: "flex-end"}}>
+                    <CopyButton copyText={jsonString} text="Kopier JSON"/>
+                  </div>
+              )}
+            </Box><Box background="surface-subtle" padding="space-16" borderWidth="2">
+              <DataDisplay loading={loading} error={error} data={data}/>
+            </Box></>
         )}
       </Page.Block>
     </Page>
