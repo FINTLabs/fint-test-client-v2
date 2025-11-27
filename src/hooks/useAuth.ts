@@ -6,6 +6,7 @@ import { isAuthExpired, getPlayWithFint, ensureLoggedIn } from "../utils/auth";
 
 export function useAuth() {
   const [auth, setAuth] = useState<Auth | null>(() => store("auth") ?? null);
+  const [username, setUsername] = useState<string>(() => store("username") ?? "");
   const [expires, setExpires] = useState<number>(() => (auth ? Date.parse(auth.expires) : 0));
 
   const playWithFint = useMemo(() => getPlayWithFint(getBaseUrl()), []);
@@ -27,6 +28,8 @@ export function useAuth() {
     async () => ensureLoggedIn(auth, expires, playWithFint, setAuth, setExpires),
     [auth, expires, playWithFint]
   );
+
+  const getUsername = useCallback(() => username, [username]);
 
   return {
     auth,

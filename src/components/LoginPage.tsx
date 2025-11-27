@@ -29,6 +29,7 @@ export function LoginPage({ onLogin, onLogout }: LoginPageProps) {
       const auth = await login(clientId, clientSecret, username, password);
 
       store("auth", auth);
+      store("username", username);
       onLogin(auth);
     } catch (err: any) {
       console.error(err);

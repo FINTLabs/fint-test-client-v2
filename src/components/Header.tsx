@@ -1,4 +1,5 @@
 import { NovariHeader } from "novari-frontend-components";
+import store from "store2";
 
 interface HeaderProps {
   onLogout: () => void;
@@ -6,6 +7,7 @@ interface HeaderProps {
 
 //TODO: check what is necessary to keep in the header ie login/logout and scrolling
 export function Header({ onLogout }: HeaderProps) {
+    const username = store("username") ?? "NO USERNAME FOUND";
   return (
     <>
       <header>
@@ -53,7 +55,7 @@ export function Header({ onLogout }: HeaderProps) {
         showLogoWithTitle={true}
         menu={[]}
         isLoggedIn={true}
-        displayName="Test User"
+        displayName={username}
         onLogout={onLogout}
         onLogin={() => {}}
         onMenuClick={() => {}}
