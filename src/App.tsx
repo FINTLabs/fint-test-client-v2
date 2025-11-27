@@ -1,4 +1,4 @@
-import { Page } from "@navikt/ds-react";
+import {Box, Page} from "@navikt/ds-react";
 import { useAuth } from "./hooks/useAuth";
 import { useApi } from "./hooks/useApi";
 import { useUrl } from "./hooks/useUrl";
@@ -34,7 +34,9 @@ export default function App() {
       <Header onLogout={handleLogout} />
       <Page.Block as="main" width="xl" gutters>
         <UriForm uri={uri} onUriChange={setUri} onSubmit={handleSubmit} />
+        <Box background="surface-subtle" padding="space-16" borderWidth="2">
         <DataDisplay loading={loading} error={error} data={data} />
+        </Box>
       </Page.Block>
     </Page>
   );

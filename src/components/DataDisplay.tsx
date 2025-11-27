@@ -1,4 +1,3 @@
-import { Box } from "@navikt/ds-react";
 import React, { useMemo } from "react";
 
 interface DataDisplayProps {
@@ -75,7 +74,7 @@ export function DataDisplay({ loading, error, data }: DataDisplayProps) {
   }, [data]);
 
   return (
-      <Box background="surface-subtle" padding="space-16" borderWidth="2">
+
     <section style={{ marginTop: "1rem" }}>
       {loading && <div>Loading…</div>}
       {error && <pre className="error">{error}</pre>}
@@ -83,6 +82,5 @@ export function DataDisplay({ loading, error, data }: DataDisplayProps) {
         <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{jsonContent}</pre>
       )}
     </section>
-      </Box>
   );
 }
