@@ -12,6 +12,5 @@ spec:
     routes:
       - host: api.felleskomponent.no
         path: /
-        middlewares:
   imagePullSecrets:
     - ghcr
