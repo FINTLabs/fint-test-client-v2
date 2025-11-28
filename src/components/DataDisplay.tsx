@@ -7,11 +7,8 @@ interface DataDisplayProps {
 }
 
 
-// Function to safely convert URLs in JSON string to clickable links
-// React automatically escapes text content, so we don't need manual HTML escaping
 function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
-  // Match URLs (http://, https://, or relative URLs starting with /)
-  // More precise regex to avoid matching inside other JSON values
+
   const urlRegex = /(https?:\/\/[^\s"'<>,\]}]+|\/[^\s"'<>,\]}]+)/g;
 
   const parts: (string | React.ReactElement)[] = [];
@@ -20,19 +17,24 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
   let keyCounter = 0;
 
   while ((match = urlRegex.exec(jsonString)) !== null) {
-    // Add text before the URL (React will escape it automatically)
+
     if (match.index > lastIndex) {
       parts.push(jsonString.substring(lastIndex, match.index));
     }
 
-    // Create safe link
     const url = match[0];
     let href: string;
     try {
-        href = `${window.location.origin}?${url}`;
+      let path: string;
+      if (url.startsWith("http://") || url.startsWith("https://")) {
+        const urlObj = new URL(url);
+        path = urlObj.pathname;
+      } else {
+        path = url;
+      }
+      
+      href = `${window.location.origin}?${path}`;
 
-
-      // Validate URL to prevent javascript: or data: schemes
       const urlObj = new URL(href, window.location.origin);
       if (urlObj.protocol === "http:" || urlObj.protocol === "https:") {
         parts.push(
@@ -47,18 +49,15 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
           </a>
         );
       } else {
-        // If invalid protocol, just show as text (React escapes automatically)
         parts.push(url);
       }
     } catch {
-      // If URL parsing fails, show as text (React escapes automatically)
       parts.push(url);
     }
 
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text (React escapes automatically)
   if (lastIndex < jsonString.length) {
     parts.push(jsonString.substring(lastIndex));
   }
