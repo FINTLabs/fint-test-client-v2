@@ -42,7 +42,8 @@ export default function App() {
         <Box padding="space-16">
           <UriForm uri={uri} onUriChange={setUri} onSubmit={handleSubmit} />
         </Box>
-        {data !== null && (
+        {error && <pre className="error">{error}</pre>}
+        {(data !== null || error !== null || loading) && (
             <><Box padding="space-4" >
               {jsonString && (
                   <div style={{marginBottom: "1rem", display: "flex", justifyContent: "flex-end"}}>

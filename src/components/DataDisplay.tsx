@@ -29,7 +29,13 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
     const url = match[0];
     let href: string;
     try {
-      href = url.startsWith("http") ? url : `${window.location.origin}${url}`;
+      // For relative URLs, prefix with ? to match the app's URL structure
+      if (url.startsWith("http")) {
+        href = url;
+      } else {
+        // Prefix relative URLs with ? so they work when clicked
+        href = `${window.location.origin}?${url}`;
+      }
 
       // Validate URL to prevent javascript: or data: schemes
       const urlObj = new URL(href, window.location.origin);
