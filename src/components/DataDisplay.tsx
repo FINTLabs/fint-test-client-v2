@@ -7,66 +7,64 @@ interface DataDisplayProps {
 }
 
 
-
+// Function to safely convert URLs in JSON string to clickable links
+// React automatically escapes text content, so we don't need manual HTML escaping
 function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
+  // Match URLs (http://, https://, or relative URLs starting with /)
+  // More precise regex to avoid matching inside other JSON values
   const urlRegex = /(https?:\/\/[^\s"'<>,\]}]+|\/[^\s"'<>,\]}]+)/g;
 
   const parts: (string | React.ReactElement)[] = [];
   let lastIndex = 0;
-  let match: RegExpExecArray | null;
+  let match;
   let keyCounter = 0;
 
   while ((match = urlRegex.exec(jsonString)) !== null) {
-    // Add text before the URL
+    // Add text before the URL (React will escape it automatically)
     if (match.index > lastIndex) {
       parts.push(jsonString.substring(lastIndex, match.index));
     }
 
+    // Create safe link
     const url = match[0];
-
+    let href: string;
     try {
+        href = `${window.location.origin}?${url}`;
 
-      const originalUrlObj = url.startsWith("http")
-          ? new URL(url)
-          : new URL(url, window.location.origin);
 
-      if (
-          originalUrlObj.protocol === "http:" ||
-          originalUrlObj.protocol === "https:"
-      ) {
-        // Rewrite it into your legacy "viewer" format
-        const href = `${window.location.origin}?${url}`;
-
+      // Validate URL to prevent javascript: or data: schemes
+      const urlObj = new URL(href, window.location.origin);
+      if (urlObj.protocol === "http:" || urlObj.protocol === "https:") {
         parts.push(
-            <a
-                key={`link-${keyCounter++}`}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "#0066cc", textDecoration: "underline" }}
-            >
-              {url}
-            </a>
+          <a
+            key={`link-${keyCounter++}`}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#0066cc", textDecoration: "underline" }}
+          >
+            {url}
+          </a>
         );
       } else {
+        // If invalid protocol, just show as text (React escapes automatically)
         parts.push(url);
       }
     } catch {
-      // If URL fails to parse, show plain text
+      // If URL parsing fails, show as text (React escapes automatically)
       parts.push(url);
     }
 
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text after last URL
+  // Add remaining text (React escapes automatically)
   if (lastIndex < jsonString.length) {
     parts.push(jsonString.substring(lastIndex));
   }
 
   return parts.length > 0 ? parts : [jsonString];
 }
-
 
 
 export function DataDisplay({ loading, error, data }: DataDisplayProps) {
