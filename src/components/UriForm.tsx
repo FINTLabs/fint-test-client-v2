@@ -11,12 +11,12 @@ export function UriForm({ uri, onUriChange, onSubmit }: UriFormProps) {
 
   return (
     <>
-      {uri === "" && (
+
         <p className="intro">
           Skriv inn en sti (for eksempel <code>/fint/client</code>) etter <code>{baseUrl}</code> og
           trykk FINT!
         </p>
-      )}
+
 
       <form onSubmit={onSubmit} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
         <span className="fint">{baseUrl}</span>
