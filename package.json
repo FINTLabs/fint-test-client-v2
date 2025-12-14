@@ -12,7 +12,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css}\""
   },
   "dependencies": {
-    "@navikt/ds-css": "7.33.3",
+    "@navikt/ds-css": "7.33.5",
     "@navikt/ds-react": "7.33.3",
     "axios": "^1.13.2",
     "client-oauth2": "4.3.3",
