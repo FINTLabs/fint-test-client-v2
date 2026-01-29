@@ -1,13 +1,14 @@
 import React, { useMemo } from "react";
+import { getBaseUrl } from "../constants";
 
 interface DataDisplayProps {
   loading: boolean;
   error: string | null;
   data: unknown;
+  fetchUrl: (url: string) => Promise<void>;
 }
 
-
-function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
+function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void>): (string | React.ReactElement)[] {
 
   const urlRegex = /(https?:\/\/[^\s"'<>,\]}]+|\/[^\s"'<>,\]}]+)/g;
 
@@ -23,34 +24,39 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
     }
 
     const url = match[0];
-    let href: string;
+    let path: string;
     try {
-      let path: string;
+      const BASE_URL = getBaseUrl();
       if (url.startsWith("http://") || url.startsWith("https://")) {
-        const urlObj = new URL(url);
-        path = urlObj.pathname;
+        // Extract path by removing BASE_URL, matching old code: links[i].href.replace(BASE_URL, '')
+        const fullUrl = url;
+        if (fullUrl.startsWith(BASE_URL)) {
+          path = fullUrl.replace(BASE_URL, "");
+        } else {
+          // If URL is from different domain, extract pathname + search + hash
+          const urlObj = new URL(fullUrl);
+          path = urlObj.pathname + urlObj.search + urlObj.hash;
+        }
       } else {
         path = url;
       }
       
-      href = `${window.location.origin}?${path}`;
+      const href = `${window.location.origin}?${path}`;
 
-      const urlObj = new URL(href, window.location.origin);
-      if (urlObj.protocol === "http:" || urlObj.protocol === "https:") {
-        parts.push(
-          <a
-            key={`link-${keyCounter++}`}
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#0066cc", textDecoration: "underline" }}
-          >
-            {url}
-          </a>
-        );
-      } else {
-        parts.push(url);
-      }
+      parts.push(
+        <a
+          key={`link-${keyCounter++}`}
+          href={href}
+          onClick={(e) => {
+            e.preventDefault();
+            window.history.pushState(null, "", href);
+            fetchUrl(path);
+          }}
+          style={{ color: "#0066cc", textDecoration: "underline", cursor: "pointer" }}
+        >
+          {url}
+        </a>
+      );
     } catch {
       parts.push(url);
     }
@@ -66,7 +72,7 @@ function linkifyUrls(jsonString: string): (string | React.ReactElement)[] {
 }
 
 
-export function DataDisplay({ loading, error, data }: DataDisplayProps) {
+export function DataDisplay({ loading, error, data, fetchUrl }: DataDisplayProps) {
   const jsonString = useMemo(() => {
     if (data === null) return null;
     return JSON.stringify(data, null, 2);
@@ -74,8 +80,8 @@ export function DataDisplay({ loading, error, data }: DataDisplayProps) {
 
   const jsonContent = useMemo(() => {
     if (!jsonString) return null;
-    return linkifyUrls(jsonString);
-  }, [jsonString]);
+    return linkifyUrls(jsonString, fetchUrl);
+  }, [jsonString, fetchUrl]);
 
   return (
     <section style={{ marginTop: "1rem" }}>

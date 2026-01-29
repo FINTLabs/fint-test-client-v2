@@ -8,8 +8,8 @@ function isValidUriPath(path: string): boolean {
   if (path.toLowerCase().includes("javascript:") || path.toLowerCase().includes("data:"))
     return false;
   if (path.includes("..")) return false; // Prevent directory traversal
-  // Allow alphanumeric, slashes, hyphens, underscores, and common path characters
-  return /^\/[a-zA-Z0-9\/_\-.]+$/.test(path);
+  // Allow alphanumeric, slashes, hyphens, underscores, tildes, and common path characters
+  return /^\/[a-zA-Z0-9\/_\-.~]+$/.test(path);
 }
 
 export function getInitialUri(): string {

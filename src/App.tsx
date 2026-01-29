@@ -51,7 +51,7 @@ export default function App() {
                   </div>
               )}
             </Box><Box background="surface-subtle" padding="space-16" borderWidth="2">
-              <DataDisplay loading={loading} error={error} data={data}/>
+              <DataDisplay loading={loading} error={error} data={data} fetchUrl={fetchUrl}/>
             </Box></>
         )}
       </Page.Block>
