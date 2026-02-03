@@ -23,7 +23,7 @@ export function useApi(checkAuth: () => Promise<boolean>) {
         // Update baseURL dynamically before each request to match current origin
         axiosInstance.defaults.baseURL = getBaseUrl();
 
-        console.log(`Fetching ${url} ...`);
+        console.log(`Fetching: ${url} ...`);
         console.log("data: ", data);
         const res = await axiosInstance.get(url);
         setData(res.data);
