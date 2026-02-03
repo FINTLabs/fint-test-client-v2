@@ -15,7 +15,7 @@ function isValidUriPath(path: string): boolean {
 export function getInitialUri(): string {
   if (window.location.search.length > 1) {
     // Get everything after the ? without decoding
-    const uri = window.location.search.slice(1);
+    const uri = window.location.search.slice(1).toLowerCase();
     // Validate and sanitize the URI
     if (isValidUriPath(uri)) {
       return uri;
@@ -27,11 +27,13 @@ export function getInitialUri(): string {
 }
 
 export function updateUrl(uri: string): void {
+  // Convert to lowercase before validating and updating
+  const lowerUri = uri.toLowerCase();
   // Validate before updating URL
-  if (!isValidUriPath(uri)) {
-    console.error("Invalid URI path:", uri);
+  if (!isValidUriPath(lowerUri)) {
+    console.error("Invalid URI path:", lowerUri);
     return;
   }
   // Put the path directly after ? without encoding
-  history.pushState(null, "", `?${uri}`);
+  history.pushState(null, "", `?${lowerUri}`);
 }

@@ -31,14 +31,14 @@ function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void
         // Extract path by removing BASE_URL, matching old code: links[i].href.replace(BASE_URL, '')
         const fullUrl = url;
         if (fullUrl.startsWith(BASE_URL)) {
-          path = fullUrl.replace(BASE_URL, "");
+          path = fullUrl.replace(BASE_URL, "").toLowerCase();
         } else {
           // If URL is from different domain, extract pathname + search + hash
           const urlObj = new URL(fullUrl);
-          path = urlObj.pathname + urlObj.search + urlObj.hash;
+          path = (urlObj.pathname + urlObj.search + urlObj.hash).toLowerCase();
         }
       } else {
-        path = url;
+        path = url.toLowerCase();
       }
       
       const href = `${window.location.origin}?${path}`;
