@@ -24,9 +24,10 @@ export function useApi(checkAuth: () => Promise<boolean>) {
         axiosInstance.defaults.baseURL = getBaseUrl();
 
         console.log(`Fetching: ${url} ...`);
-        console.log("data: ", data);
+
         const res = await axiosInstance.get(url);
         setData(res.data);
+        console.log("data: ", data);
       } catch (e: any) {
         console.error(e);
         setError(e?.message ?? "Unknown error");
