@@ -27,7 +27,6 @@ export function useApi(checkAuth: () => Promise<boolean>) {
 
         const res = await axiosInstance.get(url.toLowerCase());
         setData(res.data);
-        console.log("data: ", data);
       } catch (e: any) {
         console.error(e);
         setError(e?.message ?? "Unknown error");
