@@ -10,7 +10,7 @@ interface DataDisplayProps {
 
 function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void>): (string | React.ReactElement)[] {
 
-  const urlRegex = /(https?:\/\/[^\s"'<>,\]}]+|\/[^\s"'<>,\]}]+)/g;
+  const urlRegex = /(https?:\/\/[^\s"'<>,\]]+|\/[^\s"'<>,\]]+)/g;
 
   const parts: (string | React.ReactElement)[] = [];
   let lastIndex = 0;
