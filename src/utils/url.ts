@@ -15,7 +15,7 @@ function isValidUriPath(path: string): boolean {
 export function getInitialUri(): string {
   if (window.location.search.length > 1) {
     // Get everything after the ? without decoding
-    const uri = window.location.search.slice(1).toLowerCase();
+    const uri = window.location.search.slice(1);
     // Validate and sanitize the URI
     if (isValidUriPath(uri)) {
       return uri;
