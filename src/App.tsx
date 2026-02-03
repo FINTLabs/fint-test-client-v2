@@ -34,7 +34,7 @@ export default function App() {
   if (isExpired) {
     return <LoginPage onLogin={handleLogin} onLogout={handleLogout} />;
   }
-console.log("data", data);
+
   return (
     <Page footer={<Footer />}>
       <Header onLogout={handleLogout} />
