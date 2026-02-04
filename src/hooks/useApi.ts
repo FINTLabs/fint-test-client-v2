@@ -25,7 +25,7 @@ export function useApi(checkAuth: () => Promise<boolean>) {
 
         console.log(`Fetching: ${url} ...`);
 
-        const res = await axiosInstance.get(url.toLowerCase());
+        const res = await axiosInstance.get(url);
         setData(res.data);
       } catch (e: any) {
         console.error(e);

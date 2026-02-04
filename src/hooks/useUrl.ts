@@ -9,8 +9,8 @@ export function useUrl(fetchUrl: (url: string) => Promise<void>, isExpired: bool
     const handler = () => {
       console.log("popstate " + window.location.search);
       if (window.location.search.length > 1) {
-        // Get everything after ? without decoding and convert to lowercase
-        const newUrl = window.location.search.substring(1).toLowerCase();
+        // Get everything after ? without decoding
+        const newUrl = window.location.search.substring(1);
         setUri(newUrl);
         fetchUrl(newUrl);
       } else {
@@ -33,9 +33,8 @@ export function useUrl(fetchUrl: (url: string) => Promise<void>, isExpired: bool
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!uri) return;
-    const lowerUri = uri.toLowerCase();
-    updateUrl(lowerUri);
-    fetchUrl(lowerUri);
+    updateUrl(uri);
+    fetchUrl(uri);
   };
 
   return {

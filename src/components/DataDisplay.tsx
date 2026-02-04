@@ -6,9 +6,10 @@ interface DataDisplayProps {
   error: string | null;
   data: unknown;
   fetchUrl: (url: string) => Promise<void>;
+  setUri: (uri: string) => void;
 }
 
-function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void>): (string | React.ReactElement)[] {
+function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void>, setUri: (uri: string) => void): (string | React.ReactElement)[] {
 
   const urlRegex = /(https?:\/\/[^\s"'<>,\]]+|\/[^\s"'<>,\]]+)/g;
 
@@ -31,14 +32,14 @@ function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void
         // Extract path by removing BASE_URL, matching old code: links[i].href.replace(BASE_URL, '')
         const fullUrl = url;
         if (fullUrl.startsWith(BASE_URL)) {
-          path = fullUrl.replace(BASE_URL, "").toLowerCase();
+          path = fullUrl.replace(BASE_URL, "");
         } else {
           // If URL is from different domain, extract pathname + search + hash
           const urlObj = new URL(fullUrl);
-          path = (urlObj.pathname + urlObj.search + urlObj.hash).toLowerCase();
+          path = urlObj.pathname + urlObj.search + urlObj.hash;
         }
       } else {
-        path = url.toLowerCase();
+        path = url;
       }
       
       const href = `${window.location.origin}?${path}`;
@@ -50,6 +51,7 @@ function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void
           onClick={(e) => {
             e.preventDefault();
             window.history.pushState(null, "", href);
+            setUri(path);
             fetchUrl(path);
           }}
           style={{ color: "#0066cc", textDecoration: "underline", cursor: "pointer" }}
@@ -72,7 +74,7 @@ function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void
 }
 
 
-export function DataDisplay({ loading, error, data, fetchUrl }: DataDisplayProps) {
+export function DataDisplay({ loading, error, data, fetchUrl, setUri }: DataDisplayProps) {
   const jsonString = useMemo(() => {
     if (data === null) return null;
     return JSON.stringify(data, null, 2);
@@ -80,8 +82,8 @@ export function DataDisplay({ loading, error, data, fetchUrl }: DataDisplayProps
 
   const jsonContent = useMemo(() => {
     if (!jsonString) return null;
-    return linkifyUrls(jsonString, fetchUrl);
-  }, [jsonString, fetchUrl]);
+    return linkifyUrls(jsonString, fetchUrl, setUri);
+  }, [jsonString, fetchUrl, setUri]);
 
   return (
     <section style={{ marginTop: "1rem" }}>
