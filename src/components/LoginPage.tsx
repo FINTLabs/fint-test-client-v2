@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Page } from "@navikt/ds-react";
 import { LoginFormWithJsonPrefill } from "../LoginFormWithJsonPrefill";
-import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { login } from "../services/authService";
 import type { Auth } from "../utils/auth";
 import store from "store2";
+import { NovariHeader } from "novari-frontend-components";
 
 interface LoginPageProps {
   onLogin: (auth: Auth) => void;
@@ -41,7 +41,16 @@ export function LoginPage({ onLogin, onLogout }: LoginPageProps) {
 
   return (
     <Page footer={<Footer />}>
-      <Header onLogout={onLogout} />
+      <NovariHeader
+        appName="FINT Test Client"
+        showLogoWithTitle={true}
+        menu={[]}
+        isLoggedIn={false}
+        // displayName={username}
+        onLogout={onLogout}
+        onLogin={() => {}}
+        onMenuClick={() => {}}
+      />
       <Page.Block as="main" width="xl" gutters>
         <LoginFormWithJsonPrefill isLoading={loginLoading} onSubmit={handleLogin} />
         {loginError && <div className="error">{loginError}</div>}
