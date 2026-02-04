@@ -39,7 +39,7 @@ export default function App() {
   }
 
   return (
-    <Page footer={<Footer />}>
+      <Page footer={<Footer />}>
       <Header onLogout={handleLogout} />
       <Page.Block as="main" width="xl" gutters>
         <Box padding="space-16">
