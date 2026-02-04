@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { getInitialUri, updateUrl } from "../utils/url";
 
-export function useUrl(fetchUrl: (url: string) => Promise<void>, isExpired: boolean) {
+export function useUrl(
+  fetchUrl: (url: string) => Promise<void>,
+  isExpired: boolean,
+  addToHistory?: (uri: string) => void
+) {
   const [uri, setUri] = useState<string>(() => getInitialUri());
 
   // Handle back/forward navigation
@@ -12,6 +16,7 @@ export function useUrl(fetchUrl: (url: string) => Promise<void>, isExpired: bool
         // Get everything after ? without decoding
         const newUrl = window.location.search.substring(1);
         setUri(newUrl);
+        addToHistory?.(newUrl);
         fetchUrl(newUrl);
       } else {
         window.location.reload();
@@ -25,6 +30,7 @@ export function useUrl(fetchUrl: (url: string) => Promise<void>, isExpired: bool
   // Initial fetch if there is a query param and we are not expired
   useEffect(() => {
     if (uri && !isExpired) {
+      addToHistory?.(uri);
       fetchUrl(uri);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,12 +40,21 @@ export function useUrl(fetchUrl: (url: string) => Promise<void>, isExpired: bool
     e.preventDefault();
     if (!uri) return;
     updateUrl(uri);
+    addToHistory?.(uri);
     fetchUrl(uri);
+  };
+
+  const handleSelectFromHistory = (selectedUri: string) => {
+    setUri(selectedUri);
+    updateUrl(selectedUri);
+    addToHistory?.(selectedUri);
+    fetchUrl(selectedUri);
   };
 
   return {
     uri,
     setUri,
     handleSubmit,
+    handleSelectFromHistory,
   };
 }

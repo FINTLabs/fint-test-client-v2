@@ -2,11 +2,13 @@ import { Box, Page, CopyButton } from "@navikt/ds-react";
 import { useAuth } from "./hooks/useAuth";
 import { useApi } from "./hooks/useApi";
 import { useUrl } from "./hooks/useUrl";
+import { useSearchHistory } from "./hooks/useSearchHistory";
 import { LoginPage } from "./components/LoginPage";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { UriForm } from "./components/UriForm";
 import { DataDisplay } from "./components/DataDisplay";
+import { SearchHistory } from "./components/SearchHistory";
 import store from "store2";
 import type { Auth } from "./utils/auth";
 import { useMemo } from "react";
@@ -14,7 +16,8 @@ import { useMemo } from "react";
 export default function App() {
   const { setAuth, setExpires, isExpired, checkAuth } = useAuth();
   const { data, error, loading, fetchUrl } = useApi(checkAuth);
-  const { uri, setUri, handleSubmit } = useUrl(fetchUrl, isExpired);
+  const { history, addToHistory, clearHistory } = useSearchHistory();
+  const { uri, setUri, handleSubmit, handleSelectFromHistory } = useUrl(fetchUrl, isExpired, addToHistory);
 
   const jsonString = useMemo(() => {
     if (data === null) return null;
@@ -41,6 +44,11 @@ export default function App() {
       <Page.Block as="main" width="xl" gutters>
         <Box padding="space-16">
           <UriForm uri={uri} onUriChange={setUri} onSubmit={handleSubmit} />
+          <SearchHistory
+            history={history}
+            onSelect={handleSelectFromHistory}
+            onClear={clearHistory}
+          />
         </Box>
 
         {(data !== null || error !== null || loading) && (
@@ -51,7 +59,7 @@ export default function App() {
                   </div>
               )}
             </Box><Box background="surface-subtle" padding="space-16" borderWidth="2">
-              <DataDisplay loading={loading} error={error} data={data} fetchUrl={fetchUrl} setUri={setUri}/>
+              <DataDisplay loading={loading} error={error} data={data} fetchUrl={fetchUrl} setUri={setUri} addToHistory={addToHistory}/>
             </Box></>
         )}
       </Page.Block>

@@ -14,7 +14,7 @@ export function UriForm({ uri, onUriChange, onSubmit }: UriFormProps) {
 
         <p className="intro">
           Skriv inn en sti (for eksempel <code>/fint/client</code>) etter <code>{baseUrl}</code> og
-          trykk FINT!
+          trykk Kjør!
         </p>
 
 
@@ -27,7 +27,7 @@ export function UriForm({ uri, onUriChange, onSubmit }: UriFormProps) {
           size={80}
           id="uri"
         />
-        <input type="submit" value="FINT!" />
+        <input type="submit" value="Kjør" />
       </form>
     </>
   );

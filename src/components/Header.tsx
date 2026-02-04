@@ -51,7 +51,7 @@ export function Header({ onLogout }: HeaderProps) {
         />
       </header>
       <NovariHeader
-        appName="Fint Test Client"
+        appName="FINT Test Client"
         showLogoWithTitle={true}
         menu={[]}
         isLoggedIn={true}

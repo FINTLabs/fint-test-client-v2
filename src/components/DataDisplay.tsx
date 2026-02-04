@@ -7,9 +7,15 @@ interface DataDisplayProps {
   data: unknown;
   fetchUrl: (url: string) => Promise<void>;
   setUri: (uri: string) => void;
+  addToHistory?: (uri: string) => void;
 }
 
-function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void>, setUri: (uri: string) => void): (string | React.ReactElement)[] {
+function linkifyUrls(
+  jsonString: string,
+  fetchUrl: (url: string) => Promise<void>,
+  setUri: (uri: string) => void,
+  addToHistory?: (uri: string) => void
+): (string | React.ReactElement)[] {
 
   const urlRegex = /(https?:\/\/[^\s"'<>,\]]+|\/[^\s"'<>,\]]+)/g;
 
@@ -52,6 +58,7 @@ function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void
             e.preventDefault();
             window.history.pushState(null, "", href);
             setUri(path);
+            addToHistory?.(path);
             fetchUrl(path);
           }}
           style={{ color: "#0066cc", textDecoration: "underline", cursor: "pointer" }}
@@ -74,7 +81,7 @@ function linkifyUrls(jsonString: string, fetchUrl: (url: string) => Promise<void
 }
 
 
-export function DataDisplay({ loading, error, data, fetchUrl, setUri }: DataDisplayProps) {
+export function DataDisplay({ loading, error, data, fetchUrl, setUri, addToHistory }: DataDisplayProps) {
   const jsonString = useMemo(() => {
     if (data === null) return null;
     return JSON.stringify(data, null, 2);
@@ -82,8 +89,8 @@ export function DataDisplay({ loading, error, data, fetchUrl, setUri }: DataDisp
 
   const jsonContent = useMemo(() => {
     if (!jsonString) return null;
-    return linkifyUrls(jsonString, fetchUrl, setUri);
-  }, [jsonString, fetchUrl, setUri]);
+    return linkifyUrls(jsonString, fetchUrl, setUri, addToHistory);
+  }, [jsonString, fetchUrl, setUri, addToHistory]);
 
   return (
     <section style={{ marginTop: "1rem" }}>
