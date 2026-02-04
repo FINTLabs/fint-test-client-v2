@@ -52,8 +52,8 @@ export default function App() {
     return [
       {
         action: "history-menu",
-        label: `Søkehistorikk (${history.length})`,
-        description: "Tidligere søk",
+        label: `URI Historikk (${history.length})`,
+        description: "Tidligere URI",
         displayBox: false,
         submenu: [
           {
