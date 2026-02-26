@@ -38,10 +38,6 @@ export default function App() {
     setExpires(Date.parse(newAuth.expires));
   };
 
-  if (isExpired) {
-    return <LoginPage onLogin={handleLogin} onLogout={handleLogout} />;
-  }
-
   const username = store("username") ?? "NO USERNAME FOUND";
 
   const historyMenu = useMemo(() => {
@@ -69,6 +65,10 @@ export default function App() {
       },
     ];
   }, [history]);
+
+  if (isExpired) {
+    return <LoginPage onLogin={handleLogin} onLogout={handleLogout} />;
+  }
 
   return (
     <Page footer={<Footer />}>
