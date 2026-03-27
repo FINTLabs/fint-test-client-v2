@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@navikt/ds-css": "7.33.3",
-    "@navikt/ds-react": "7.33.3",
+    "@navikt/ds-react": "7.33.5",
     "axios": "^1.13.2",
     "client-oauth2": "4.3.3",
     "novari-frontend-components": "3.1.1",
