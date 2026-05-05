@@ -3,6 +3,7 @@ import { useAuth } from "./hooks/useAuth";
 import { useApi } from "./hooks/useApi";
 import { useUrl } from "./hooks/useUrl";
 import { useSearchHistory } from "./hooks/useSearchHistory";
+import { usePageViewAnalytics } from "./hooks/usePageViewAnalytics";
 import { LoginPage } from "./components/LoginPage";
 import { Footer } from "./components/Footer";
 import { UriForm } from "./components/UriForm";
@@ -14,6 +15,8 @@ import { NovariHeader } from "novari-frontend-components";
 import { TrashIcon } from "@navikt/aksel-icons";
 
 export default function App() {
+  usePageViewAnalytics();
+
   const { setAuth, setExpires, isExpired, checkAuth } = useAuth();
   const { data, error, loading, fetchUrl } = useApi(checkAuth);
   const { history, addToHistory, clearHistory } = useSearchHistory();
