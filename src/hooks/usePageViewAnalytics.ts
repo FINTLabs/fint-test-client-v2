@@ -8,6 +8,7 @@ function getCurrentPath(): string {
 export function usePageViewAnalytics() {
   const lastPathRef = useRef<string>("");
 
+  console.log("usePageViewAnalytics()");
   useEffect(() => {
     const trackCurrentPath = () => {
       const path = getCurrentPath();
