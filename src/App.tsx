@@ -15,7 +15,7 @@ import { TrashIcon } from "@navikt/aksel-icons";
 
 export default function App() {
   useEffect(() => {
-    fetch("/analytics/api/events", {
+    fetch("/api/analytics/events", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
