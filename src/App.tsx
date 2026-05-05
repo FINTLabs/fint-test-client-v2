@@ -22,7 +22,7 @@ export default function App() {
       },
       body: JSON.stringify({
         app: "fint-test-client-v2",
-        event: "page_view",
+        type: "page_view",
         path: window.location.pathname,
       }),
     });
