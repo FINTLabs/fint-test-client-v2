@@ -9,25 +9,11 @@ import { UriForm } from "./components/UriForm";
 import { DataDisplay } from "./components/DataDisplay";
 import store from "store2";
 import type { Auth } from "./utils/auth";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { NovariHeader } from "novari-frontend-components";
 import { TrashIcon } from "@navikt/aksel-icons";
 
 export default function App() {
-  useEffect(() => {
-    fetch("/api/analytics/events", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        app: "fint-test-client",
-        type: "page_view",
-        path: window.location.pathname,
-      }),
-    });
-  }, []);
-
   const { setAuth, setExpires, isExpired, checkAuth } = useAuth();
   const { data, error, loading, fetchUrl } = useApi(checkAuth);
   const { history, addToHistory, clearHistory } = useSearchHistory();
