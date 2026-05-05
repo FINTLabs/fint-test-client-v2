@@ -21,7 +21,7 @@ export default function App() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        app: "fint-test-client-v2",
+        app: "fint-test-client",
         type: "page_view",
         path: window.location.pathname,
       }),
