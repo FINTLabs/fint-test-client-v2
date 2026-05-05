@@ -37,7 +37,7 @@ export function useApi(checkAuth: () => Promise<boolean>) {
     [checkAuth]
   );
 
-  console.log("data", data);
+  console.log("data in useAPI: ", data);
   return {
     data,
     error,
