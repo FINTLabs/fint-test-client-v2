@@ -10,7 +10,7 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx:1.30.0
+FROM nginx:1.31.2
 COPY --from=build /src/dist/ /usr/share/nginx/html/test-client/
 COPY --from=build /src/dist/ /usr/share/nginx/html/
 COPY default.conf /etc/nginx/conf.d/default.conf
