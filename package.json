@@ -19,7 +19,7 @@
     "novari-frontend-components": "3.1.1",
     "querystring-es3": "^0.2.1",
     "react": "19.2.0",
-    "react-dom": "19.2.0",
+    "react-dom": "19.2.1",
     "store2": "^2.14.4"
   },
   "devDependencies": {
