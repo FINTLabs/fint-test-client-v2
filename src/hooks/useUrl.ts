@@ -8,7 +8,6 @@ export function useUrl(
 ) {
   const [uri, setUri] = useState<string>(() => getInitialUri());
 
-  // Handle back/forward navigation
   useEffect(() => {
     const handler = () => {
       console.log("popstate " + window.location.search);
