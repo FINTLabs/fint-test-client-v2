@@ -1,3 +1,6 @@
+# Each push to main starts CI, and CI then starts the deploy to beta and pwf.
+# The commit messages of Dependabot have [skip ci], so a squash merge of a Dependabot
+# pull request starts no workflow and no deploy. CI also does not run on these pull requests.
 version: 2
 updates:
   - package-ecosystem: "npm"
@@ -12,8 +15,8 @@ updates:
       - "dependencies"
       - "npm"
     commit-message:
-      prefix: "deps"
-      prefix-development: "deps-dev"
+      prefix: "[skip ci] deps"
+      prefix-development: "[skip ci] deps-dev"
       include: "scope"
     groups:
       security-patches:
@@ -64,7 +67,7 @@ updates:
       - "dependencies"
       - "docker"
     commit-message:
-      prefix: "deps"
+      prefix: "[skip ci] deps"
       include: "scope"
     groups:
       docker-images:
@@ -83,7 +86,7 @@ updates:
       - "dependencies"
       - "github-actions"
     commit-message:
-      prefix: "deps"
+      prefix: "[skip ci] deps"
       include: "scope"
     groups:
       github-actions:
