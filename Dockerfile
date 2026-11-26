@@ -1,4 +1,4 @@
-FROM node:24 AS build
+FROM node:25 AS build
 
 WORKDIR /src
 
@@ -10,7 +10,7 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx:1.31.2
+FROM nginx:1.31.9
 COPY --from=build /src/dist/ /usr/share/nginx/html/test-client/
 COPY --from=build /src/dist/ /usr/share/nginx/html/
 COPY default.conf /etc/nginx/conf.d/default.conf
